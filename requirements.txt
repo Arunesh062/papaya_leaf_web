@@ -1,0 +1,12 @@
+torch
+torchvision
+timm
+Pillow
+numpy
+opencv-python-headless
+flask
+flask-cors
+google-generativeai
+gunicorn
+groq
+python-dotenv

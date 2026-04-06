@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CaricaCare AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        @keyframes slideDown {
+            from {
+                top: -100px;
+                opacity: 0;
+            }
+
+            to {
+                top: 20px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                top: 20px;
+                opacity: 1;
+            }
+
+            to {
+                top: -100px;
+                opacity: 0;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- LANDING PAGE VIEW -->
+    <div id="landing-view">
+        <div class="landing-header">
+            <div class="brand-logo">
+                <i class="fa-solid fa-leaf leaf-icon"></i> PapayaGuard AI
+            </div>
+            <i class="fa-solid fa-bars menu-icon"></i>
+        </div>
+
+
+
+        <div class="landing-content">
+            <div class="landing-title">Protect Your Harvest with Precision AI</div>
+            <div class="landing-desc">
+                Identify papaya leaf diseases instantly. Empowering farmers and researchers with real-time diagnostic
+                tools powered by deep learning.
+            </div>
+            <button class="explore-btn" onclick="startApp()">Explore System</button>
+        </div>
+
+        <div class="section-head">
+            <h2>How it works</h2>
+        </div>
+
+        <div class="steps-container">
+            <div class="step-card" onclick="startApp()" style="cursor: pointer;">
+                <div class="step-icon-box"><i class="fa-solid fa-camera"></i></div>
+                <h3 class="step-title">Snap</h3>
+                <p class="step-desc">Upload or take a clear photo of the affected leaf surface.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon-box"><i class="fa-solid fa-microchip"></i></div>
+                <h3 class="step-title">Analyze</h3>
+                <p class="step-desc">Our AI model scans for patterns of Ring Spot, Mosaics, or Blights.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon-box"><i class="fa-solid fa-circle-check"></i></div>
+                <h3 class="step-title">Result</h3>
+                <p class="step-desc">Get an instant diagnosis and expert recommended treatments.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-links">
+                <span>About Project</span>
+                <span>Research Papers</span>
+                <span>Contact Us</span>
+            </div>
+            <div class="footer-copy">© 2024 Papaya Leaf Disease Detection System.</div>
+            <div class="footer-credit">DEVELOPED BY COLLEGE OF AGRICULTURE RESEARCH</div>
+        </div>
+    </div>
+
+    <!-- MAIN APP VIEW -->
+    <div id="app-view">
+        <div class="main-container">
+
+            <!-- Header -->
+            <div class="app-header">
+                <button class="back-btn" onclick="goBack()" style="visibility: hidden;" id="backBtn"><i
+                        class="fa-solid fa-chevron-left"></i></button>
+                <div class="header-title" id="pageTitle">Upload & Analyze</div>
+                <div style="width: 24px;"></div> <!-- Spacer -->
+                <button class="back-btn" onclick="showInfo()"><i class="fa-solid fa-circle-info"></i></button>
+            </div>
+
+            <!-- UPLOAD VIEW -->
+            <div id="upload-view">
+                <div class="hero-section">
+                    <div class="hero-title">Detect Leaf Disease</div>
+                    <div class="hero-subtitle">Upload a clear photo of the papaya leaf<br>for AI analysis.</div>
+                </div>
+
+                <div class="scan-options">
+                    <div class="scan-btn" onclick="openCamera()">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>Scan Leaf</span>
+                    </div>
+                    <div class="scan-btn" onclick="triggerInput()">
+                        <i class="fa-solid fa-image"></i>
+                        <span>Upload Photo</span>
+                    </div>
+                </div>
+
+                <!-- Removed old upload-box -->
+
+                <input type="file" id="filePicker" style="display:none" accept="image/*"
+                    onchange="handleFileSelect(event)">
+
+                <div class="registration-card" id="reg-card"
+                    style="margin-top: 20px; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;">
+                    <div
+                        style="font-weight: 700; color: var(--text-dark); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-user-pen" style="color: var(--accent);"></i> User Registration
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-light); margin-bottom: 12px;">Register your mobile
+                        number once for automatic SMS reports.</div>
+                    <div id="reg-status" style="margin-bottom: 10px; display: none;">
+                        <div
+                            style="display: flex; align-items: center; justify-content: space-between; background: #f0fdf4; padding: 8px 12px; border-radius: 8px; border: 1px solid #bbf7d0;">
+                            <span id="registered-phone-display"
+                                style="color: #166534; font-weight: 600; font-size: 13px;"></span>
+                            <span onclick="clearRegistration()"
+                                style="color: #dc2626; font-size: 12px; cursor: pointer; text-decoration: underline;">Change</span>
+                        </div>
+                    </div>
+                    <div id="reg-form" style="display: flex; gap: 8px;">
+                        <input type="tel" id="reg-phone" placeholder="Enter Mobile Number"
+                            style="flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none;">
+                        <button onclick="registerUser()"
+                            style="background: var(--accent); color: white; border: none; padding: 0 15px; border-radius: 8px; font-weight: 600; cursor: pointer;">Save</button>
+                    </div>
+                </div>
+
+                <div class="preview-section" id="previewSection">
+                    <div class="preview-header">
+                        <span>Image Preview</span>
+                        <span class="remove-link" onclick="removeImage()">Remove</span>
+                    </div>
+                    <div class="image-wrapper">
+                        <div class="status-badge"><i class="fa-solid fa-check-circle"></i> READY</div>
+                        <img id="previewImg" class="preview-img" src="" alt="Preview">
+                    </div>
+                    <button class="predict-btn" onclick="uploadImage()">
+                        <i class="fa-solid fa-chart-simple"></i> Predict Disease
+                    </button>
+                </div>
+
+                <p
+                    style="text-align: center; color: var(--text-light); font-size: 12px; margin-top: 20px; font-style: italic;">
+                    Make sure the leaf is centered and well-lit for better results.
+                </p>
+            </div>
+
+
+            <!-- ANALYZING VIEW -->
+            <div id="analyzing-view" style="display: none;">
+                <div class="app-header">
+                    <button class="back-btn" onclick="cancelAnalysis()"><i class="fa-solid fa-xmark"></i></button>
+                    <div class="header-title">AI Analysis</div>
+                    <div style="width: 24px;"></div>
+                </div>
+
+                <div class="scanner-container">
+                    <div class="scanner-circle">
+                        <img id="scan-img" class="scan-img" src="" alt="Scanning">
+                        <div class="scan-line"></div>
+                        <div class="leaf-badge"><i class="fa-solid fa-leaf"></i></div>
+                    </div>
+                </div>
+
+                <div class="analysis-status">
+                    <h3 class="status-title">Analyzing leaf health...</h3>
+                    <p class="status-subtitle">Cross-referencing datasets...</p>
+
+                    <div class="progress-container">
+                        <div class="progress-bar-track">
+                            <div class="progress-bar-fill" id="analysis-progress"></div>
+                        </div>
+                    </div>
+                    <div class="progress-text" id="progress-text">0% Complete</div>
+
+                    <p class="analysis-desc">
+                        Our AI is cross-referencing your photo with thousands of healthy and diseased papaya leaf
+                        samples to provide an accurate diagnosis.
+                    </p>
+                </div>
+
+                <div class="tip-card">
+                    <div class="tip-icon"><i class="fa-regular fa-lightbulb"></i></div>
+                    <div class="tip-content">
+                        <div class="tip-title">Pro Tip</div>
+                        <div class="tip-desc">Ensure your camera lens is clean and the leaf is well-lit for the most
+                            accurate results.</div>
+                    </div>
+                </div>
+
+                <button class="cancel-btn" onclick="cancelAnalysis()">CANCEL ANALYSIS</button>
+            </div>
+
+            <!-- RESULT VIEW -->
+            <div id="result-view">
+
+                <div class="result-card">
+                    <img id="res-heatmap" class="result-bg" src="">
+                    <div class="result-overlay">
+                        <div class="heatmap-badge"><i class="fa-solid fa-layer-group"></i> AI SYMPTOM HEATMAP</div>
+                        <div
+                            style="color: rgba(255,255,255,0.8); font-size: 11px; letter-spacing: 1px; font-weight: bold; margin-bottom: 5px;">
+                            DETECTED CONDITION</div>
+                        <h2 class="disease-title" id="res-disease">Analyzing...</h2>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" id="res-bar"></div>
+                        </div>
+                        <div class="confidence-text" id="res-acc-text">0.0% Confidence</div>
+                    </div>
+                </div>
+
+                <div class="legend"
+                    style="display: flex; gap: 15px; margin-bottom: 20px; font-size: 11px; color: var(--text-light); font-weight: 600;">
+                    <span
+                        style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #94a3b8; margin-right: auto;">Heatmap
+                        Legend</span>
+                    <span style="display: flex; align-items: center; gap: 5px;"><span
+                            style="width: 8px; height: 8px; background: #FF0000; border-radius: 50%;"></span> High
+                        Severity</span>
+                    <span style="display: flex; align-items: center; gap: 5px;"><span
+                            style="width: 8px; height: 8px; background: #fbbf24; border-radius: 50%;"></span> Early
+                        Symptoms</span>
+                    <span style="display: flex; align-items: center; gap: 5px;"><span
+                            style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%;"></span>
+                        Healthy</span>
+                </div>
+
+                <!-- About Card -->
+                <div class="info-card">
+                    <div class="card-header">
+                        <div class="card-icon bg-green"><i class="fa-solid fa-info"></i></div>
+                        <div class="card-title">
+                            <h3>About the Disease</h3>
+                            <span>SCIENTIFIC OVERVIEW</span>
+                        </div>
+                    </div>
+                    <div class="card-content" id="content-about">Loading...</div>
+                    <div class="lang-controls">
+                        <button class="lang-btn active" onclick="setLang('en')">English</button>
+                        <button class="lang-btn" onclick="setLang('ta')">தமிழ்</button>
+                        <button class="lang-btn" onclick="setLang('hi')">हिंदी</button>
+                        <button class="play-btn" onclick="playCurrentSection('about', this)"><i
+                                class="fa-solid fa-play"></i></button>
+                    </div>
+                </div>
+
+                <!-- Cause Card -->
+                <div class="info-card">
+                    <div class="card-header">
+                        <div class="card-icon bg-orange"><i class="fa-solid fa-microscope"></i></div>
+                        <div class="card-title">
+                            <h3>Cause</h3>
+                            <span>TRANSMISSION VECTOR</span>
+                        </div>
+                    </div>
+                    <div class="card-content" id="content-cause">Loading...</div>
+                    <div class="lang-controls">
+                        <button class="lang-btn active" onclick="setLang('en')">English</button>
+                        <button class="lang-btn" onclick="setLang('ta')">தமிழ்</button>
+                        <button class="lang-btn" onclick="setLang('hi')">हिंदी</button>
+                        <button class="play-btn" onclick="playCurrentSection('cause', this)"><i
+                                class="fa-solid fa-play"></i></button>
+                    </div>
+                </div>
+
+                <!-- Prevention Card -->
+                <div class="info-card">
+                    <div class="card-header">
+                        <div class="card-icon bg-blue"><i class="fa-solid fa-shield-virus"></i></div>
+                        <div class="card-title">
+                            <h3>Prevention</h3>
+                            <span>EARLY SAFEGUARDS</span>
+                        </div>
+                    </div>
+                    <div class="card-content" id="content-prevention">Loading...</div>
+                    <div class="lang-controls">
+                        <button class="lang-btn active" onclick="setLang('en')">English</button>
+                        <button class="lang-btn" onclick="setLang('ta')">தமிழ்</button>
+                        <button class="lang-btn" onclick="setLang('hi')">हिंदी</button>
+                        <button class="play-btn" onclick="playCurrentSection('prevention', this)"><i
+                                class="fa-solid fa-play"></i></button>
+                    </div>
+                </div>
+
+                <!-- Treatment Card -->
+                <div class="info-card">
+                    <div class="card-header">
+                        <div class="card-icon bg-red"><i class="fa-solid fa-kit-medical"></i></div>
+                        <div class="card-title">
+                            <h3>Treatment</h3>
+                            <span>CURE & CONTROL</span>
+                        </div>
+                    </div>
+                    <div class="alert-box"
+                        style="background: #FEF2F2; color: #B91C1C; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 10px; display: flex; align-items: start; gap: 8px;">
+                        <i class="fa-solid fa-circle-exclamation" style="margin-top: 3px;"></i>
+                        <span id="treatment-alert">Action: removal and burning of infected plants.</span>
+                    </div>
+                    <div class="card-content" id="content-treatment">Loading...</div>
+                    <div class="lang-controls">
+                        <button class="lang-btn active" onclick="setLang('en')">English</button>
+                        <button class="lang-btn" onclick="setLang('ta')">தமிழ்</button>
+                        <button class="lang-btn" onclick="setLang('hi')">हिंदी</button>
+                        <button class="play-btn" onclick="playCurrentSection('treatment', this)"><i
+                                class="fa-solid fa-play"></i></button>
+                    </div>
+                </div>
+
+                <button class="assistant-btn" onclick="startReminderAssistant()">
+                    <i class="fa-solid fa-clock"></i> நினைவூட்டல் (Set Reminder)
+                </button>
+
+
+                <div class="bottom-nav">
+                    <button class="nav-btn" onclick="shareReport()">
+                        <i class="fa-solid fa-share-nodes"></i> Share
+                    </button>
+
+                    <button class="nav-btn" onclick="goBack()">
+                        <i class="fa-solid fa-camera"></i> Scan
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- REMINDER ASSISTANT MODAL -->
+            <div class="modal-overlay" id="assistantModal">
+                <div class="modal-content" style="text-align: center;">
+                    <div class="modal-header">
+                        <h3><i class="fa-solid fa-microphone-lines"></i> Voice Assistant</h3>
+                        <button class="close-modal" onclick="stopReminderAssistant()"><i
+                                class="fa-solid fa-xmark"></i></button>
+                    </div>
+
+                    <div id="va-status-box"
+                        style="margin-bottom: 20px; padding: 20px; background: #f0fdf4; border-radius: 16px; border: 2px solid var(--accent); min-height: 100px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; color: #12372A;">
+                        <span id="va-text">தொடக்கத்திற்கு காத்திருக்கிறது...</span>
+                    </div>
+
+                    <div id="va-input-area" style="display: none; margin-bottom: 20px;">
+                        <input type="tel" id="va-phone-input" maxlength="10" placeholder="10 இலக்க எண்"
+                            style="width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 20px; text-align: center; letter-spacing: 5px; outline: none;">
+                        <button onclick="vaConfirmNumber()" class="predict-btn" style="margin-top: 10px;">உறுதி
+                            செய்</button>
+                    </div>
+
+                    <div id="va-controls" style="display: flex; gap: 10px; justify-content: center;">
+                        <button id="va-btn-yes" class="lang-btn active" style="padding: 15px 30px; font-size: 16px;">ஆம்
+                            (Yes)</button>
+                        <button id="va-btn-no" class="lang-btn"
+                            style="padding: 15px 30px; font-size: 16px; background: #fee2e2; color: #991b1b;">இல்லை
+                            (No)</button>
+                    </div>
+
+                    <!-- Text Input Fallback for Yes/No -->
+                    <div id="va-text-input-yesno" style="display: none; margin-top: 15px;">
+                        <div style="font-size: 12px; color: #64748b; margin-bottom: 8px; text-align: center;">📝 அல்லது
+                            இங்கே தட்டச்சு செய்யவும் (Or type here)</div>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="va-text-yesno" placeholder="ஆம் or இல்லை"
+                                style="flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;">
+                            <button onclick="vaSubmitTextYesNo()" class="predict-btn"
+                                style="padding: 12px 20px; margin: 0;">அடுத்து (Next)</button>
+                        </div>
+                    </div>
+
+                    <div id="va-type-controls" style="display: none; flex-direction: column; gap: 10px;">
+                        <button onclick="vaPickType(7)" class="lang-opt-btn"><span class="lang-name">7
+                                நாட்கள்</span><span class="lang-sub">வழக்கமான நினைவூட்டல்</span></button>
+                        <button onclick="vaPickType(15)" class="lang-opt-btn"><span class="lang-name">15
+                                நாட்கள்</span><span class="lang-sub">வழக்கமான நினைவூட்டல்</span></button>
+                        <button onclick="vaPickType('DEMO_1_MIN')" class="lang-opt-btn"
+                            style="border-color: #2563eb;"><span class="lang-name" style="color: #2563eb;">DEMO (1
+                                Minute)</span><span class="lang-sub">சோதனைக்காக</span></button>
+                    </div>
+
+                    <!-- Text Input Fallback for Duration -->
+                    <div id="va-text-input-duration" style="display: none; margin-top: 15px;">
+                        <div style="font-size: 12px; color: #64748b; margin-bottom: 8px; text-align: center;">📝 அல்லது
+                            இங்கே தட்டச்சு செய்யவும் (Or type here)</div>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="va-text-duration" placeholder="7, 15, or demo"
+                                style="flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;">
+                            <button onclick="vaSubmitTextDuration()" class="predict-btn"
+                                style="padding: 12px 20px; margin: 0;">அடுத்து (Next)</button>
+                        </div>
+                    </div>
+
+                    <div id="va-mic-icon"
+                        style="margin-top: 20px; font-size: 24px; color: var(--accent); display: none;">
+                        <i class="fa-solid fa-circle-dot fa-fade"></i>
+                        <div style="font-size: 12px; font-weight: bold; margin-top: 5px;">உங்களைக் கேட்கிறது...</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="camera-overlay" id="cameraOverlay">
+            <div class="camera-header">
+                <button class="close-cam-btn" onclick="closeCamera()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="camera-view">
+                <video id="camera-stream" autoplay playsinline></video>
+                <canvas id="camera-canvas" style="display:none;"></canvas>
+                <div class="camera-controls">
+                    <button class="capture-btn" onclick="capturePhoto()"></button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const picker = document.getElementById('filePicker');
+            const previewSection = document.getElementById('previewSection');
+            const previewImg = document.getElementById('previewImg');
+            const uploadView = document.getElementById('upload-view');
+            const resultView = document.getElementById('result-view');
+            const backBtn = document.getElementById('backBtn');
+            const pageTitle = document.getElementById('pageTitle');
+            const cameraOverlay = document.getElementById('cameraOverlay');
+            const video = document.getElementById('camera-stream');
+            const canvas = document.getElementById('camera-canvas');
+
+            // Views
+            const analyzingView = document.getElementById('analyzing-view');
+            const scanImg = document.getElementById('scan-img');
+            const progressBar = document.getElementById('analysis-progress');
+            const progressText = document.getElementById('progress-text');
+            let analysisInterval = null;
+            let abortController = null;
+
+            let currentData = null;
+            let currentLang = 'en';
+            let stream = null;
+            let capturedBlob = null;
+
+            // Voice Control State
+            let currentSpeakingSection = null;
+            let activeBtn = null;
+            let allVoices = [];
+
+            // Load voices
+            function loadVoices() {
+                allVoices = window.speechSynthesis.getVoices();
+            }
+            loadVoices();
+            if (window.speechSynthesis.onvoiceschanged !== undefined) {
+                window.speechSynthesis.onvoiceschanged = loadVoices;
+            }
+
+            function startApp() {
+                document.getElementById('landing-view').style.display = 'none';
+                document.getElementById('app-view').style.display = 'block';
+                resetView();
+                window.scrollTo(0, 0);
+            }
+
+            function triggerInput() {
+                picker.click();
+            }
+
+            async function openCamera() {
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: 'environment' }
+                    });
+                    video.srcObject = stream;
+                    cameraOverlay.style.display = 'flex';
+                    // Play video
+                    await video.play();
+                } catch (err) {
+                    console.error(err);
+                    if (window.location.protocol === 'http:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                        alert("Camera access blocked by Chrome on insecure network (HTTP). \nPlease visit chrome://flags/#unsafely-treat-insecure-origin-as-secure, enable it, and add this URL to the list.");
+                    } else {
+                        alert("Could not access camera. Please check browser permissions in the URL bar.");
+                    }
+                }
+            }
+
+            function closeCamera() {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+                cameraOverlay.style.display = 'none';
+            }
+
+            function capturePhoto() {
+                const context = canvas.getContext('2d');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                canvas.toBlob(blob => {
+                    capturedBlob = blob;
+                    const url = URL.createObjectURL(blob);
+                    previewImg.src = url;
+                    previewSection.style.display = 'block';
+                    closeCamera();
+                    previewSection.scrollIntoView({ behavior: 'smooth' });
+                }, 'image/jpeg');
+            }
+
+            function handleFileSelect(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    capturedBlob = file;
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImg.src = e.target.result;
+                        previewSection.style.display = 'block';
+                        previewSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            function removeImage() {
+                picker.value = '';
+                capturedBlob = null;
+                previewSection.style.display = 'none';
+            }
+
+            function uploadImage() {
+                if (!capturedBlob) return;
+
+                // Show Analysis View
+                uploadView.style.display = 'none';
+                analyzingView.style.display = 'block';
+
+                // Set image
+                if (capturedBlob instanceof File) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => scanImg.src = e.target.result;
+                    reader.readAsDataURL(capturedBlob);
+                } else if (capturedBlob instanceof Blob) {
+                    scanImg.src = URL.createObjectURL(capturedBlob);
+                }
+
+                // Start Progress Animation
+                let progress = 0;
+                progressBar.style.width = '0%';
+                progressText.innerText = '0% Complete';
+
+                analysisInterval = setInterval(() => {
+                    if (progress < 90) {
+                        progress += Math.random() * 5;
+                        if (progress > 90) progress = 90;
+                        progressBar.style.width = progress + '%';
+                        progressText.innerText = Math.round(progress) + '% Complete';
+                    }
+                }, 200);
+
+                const formData = new FormData();
+                formData.append('file', capturedBlob, "captured_image.jpg");
+
+                abortController = new AbortController();
+
+                fetch('/predict', {
+                    method: 'POST',
+                    body: formData,
+                    signal: abortController.signal
+                })
+                    .then(r => r.json())
+                    .then(data => {
+                        clearInterval(analysisInterval);
+                        progressBar.style.width = '100%';
+                        progressText.innerText = '100% Complete';
+
+                        setTimeout(() => {
+                            if (data.error) {
+                                alert("Server Error: " + data.error);
+                                cancelAnalysis();
+                                return;
+                            }
+
+                            analyzingView.style.display = 'none';
+                            showResults(data);
+                        }, 800); // Small delay to show completion
+
+                    }).catch(err => {
+                        if (err.name === 'AbortError') return;
+                        clearInterval(analysisInterval);
+                        alert("Upload failed. Please check your internet connection.");
+                        cancelAnalysis();
+                    });
+            }
+
+            function cancelAnalysis() {
+                if (abortController) abortController.abort();
+                clearInterval(analysisInterval);
+                analyzingView.style.display = 'none';
+                uploadView.style.display = 'block';
+            }
+
+            function showResults(data) {
+                currentData = data;
+                pageTitle.innerText = "Full Disease Analysis";
+                backBtn.style.visibility = 'visible';
+                uploadView.style.display = 'none';
+                resultView.style.display = 'block';
+
+                document.getElementById('res-disease').innerText = data.condition;
+                const accVal = parseFloat(data.accuracy);
+                document.getElementById('res-acc-text').innerText = data.accuracy + " Confidence";
+                document.getElementById('res-bar').style.width = accVal + "%";
+
+                document.getElementById('res-heatmap').src = data.heatmap + "?t=" + Date.now();
+
+                parseAndDisplayAdvice(data);
+
+                // Automated SMS trigger if registered
+                const registeredPhone = localStorage.getItem('caricacare_phone');
+                if (registeredPhone) {
+                    autoSendSMS(registeredPhone, data);
+                }
+
+                window.scrollTo(0, 0);
+            }
+
+            function parseAndDisplayAdvice(data) {
+                const processText = (text) => {
+                    const sections = { about: "", cause: "", prevention: "", treatment: "" };
+
+                    if (!text) return sections;
+
+                    // Split by [PROTOCOL_1], [PROTOCOL_2] etc.
+                    const parts = text.split(/\[PROTOCOL_\d\](?:\s*-\s*[^ \n\r]*)?/i);
+
+                    // Remove any empty prefix before first marker
+                    const protocols = parts.map(p => p.trim()).filter(p => p.length > 0);
+
+                    if (protocols.length >= 4) {
+                        // If we have at least 4 chunks, map them directly
+                        sections.about = protocols[protocols.length - 4];
+                        sections.cause = protocols[protocols.length - 3];
+                        sections.prevention = protocols[protocols.length - 2];
+                        sections.treatment = protocols[protocols.length - 1];
+                    } else {
+                        // Fallback to legacy number splitting if markers are missing
+                        const splitText = text.split(/(?:\d\.\s+|Protocol \d:)/i);
+                        if (splitText.length >= 5) {
+                            sections.about = splitText[1].trim();
+                            sections.cause = splitText[2].trim();
+                            sections.prevention = splitText[3].trim();
+                            sections.treatment = splitText[4].trim();
+                        } else {
+                            sections.about = text.substring(0, 300) + "...";
+                            sections.treatment = "தயவுசெய்து முழு அறிக்கையை பார்க்கவும்.";
+                        }
+                    }
+                    return sections;
+                };
+
+                currentData.parsedEn = processText(data.advice_en);
+                currentData.parsedTa = processText(data.advice_ta);
+                currentData.parsedHi = processText(data.advice_hi);
+
+                updateContentDisplay(currentLang);
+            }
+
+            function setLang(lang) {
+                stopSpeaking(); // Stop any current speech when switching language
+                currentLang = lang;
+                document.querySelectorAll('.lang-controls').forEach(group => {
+                    group.querySelectorAll('.lang-btn').forEach(btn => {
+                        if (btn.innerText.toLowerCase().includes(lang === 'en' ? 'english' : lang === 'ta' ? 'தமிழ்' : 'हिंदी')) {
+                            btn.classList.add('active');
+                        } else {
+                            btn.classList.remove('active');
+                        }
+                    });
+                });
+                updateContentDisplay(lang);
+            }
+
+            function updateContentDisplay(lang) {
+                if (!currentData) return;
+                let dataset = currentData.parsedEn;
+                if (lang === 'ta') dataset = currentData.parsedTa;
+                if (lang === 'hi') dataset = currentData.parsedHi;
+
+                document.getElementById('content-about').innerText = dataset.about || "No data.";
+                document.getElementById('content-cause').innerText = dataset.cause || "No data.";
+                document.getElementById('content-prevention').innerText = dataset.prevention || "No data.";
+                document.getElementById('content-treatment').innerText = dataset.treatment || "No data.";
+            }
+
+            let speechUtterance = null;
+            let speechInterval = null;
+
+            // --- Robust Audio Management ---
+            function speakSafe(text, lang, onEnd = null) {
+                console.log(`Speaking (${lang}): ${text.substring(0, 50)}...`);
+                window.speechSynthesis.cancel();
+                if (speechInterval) clearInterval(speechInterval);
+
+                if (!text || text.trim() === "" || text === "No data.") {
+                    console.warn("No valid text to speak");
+                    if (onEnd) onEnd();
+                    return;
+                }
+
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = lang;
+                utter.rate = 1.0;
+                utter.pitch = 1.0;
+                utter.volume = 1.0;
+
+                // Improved voice selection
+                if (allVoices.length === 0) loadVoices();
+
+                // Try to find a voice that matches both language and country if possible, 
+                // otherwise just match the language part.
+                const langPart = lang.split('-')[0].toLowerCase();
+                let targetVoice = allVoices.find(v => v.lang.toLowerCase() === lang.toLowerCase());
+                if (!targetVoice) {
+                    targetVoice = allVoices.find(v => v.lang.toLowerCase().startsWith(langPart));
+                }
+
+                if (targetVoice) {
+                    console.log("Using voice:", targetVoice.name);
+                    utter.voice = targetVoice;
+                } else {
+                    console.warn(`No specific voice found for ${lang}, using default.`);
+                }
+
+                utter.onstart = () => {
+                    console.log("Speech started");
+                    startSpeechWatchdog();
+                };
+
+                utter.onend = () => {
+                    console.log("Speech ended normally");
+                    if (speechInterval) clearInterval(speechInterval);
+                    if (onEnd) onEnd();
+                };
+
+                utter.onerror = (e) => {
+                    console.error("Speech Error:", e);
+                    if (speechInterval) clearInterval(speechInterval);
+                    if (onEnd) onEnd();
+                };
+
+                // Speak
+                window.speechSynthesis.speak(utter);
+
+                // Active kick-start for mobile browsers
+                if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                    window.speechSynthesis.resume();
+                }
+
+                speechUtterance = utter;
+            }
+
+            function playCurrentSection(section, btn) {
+                const icon = btn.querySelector('i');
+
+                // Case 1: Clicking the same active button
+                if (activeBtn === btn) {
+                    if (window.speechSynthesis.speaking) {
+                        if (window.speechSynthesis.paused) {
+                            window.speechSynthesis.resume();
+                            if (icon) {
+                                icon.classList.remove('fa-play');
+                                icon.classList.add('fa-pause');
+                            }
+                        } else {
+                            window.speechSynthesis.pause();
+                            if (icon) {
+                                icon.classList.remove('fa-pause');
+                                icon.classList.add('fa-play');
+                            }
+                        }
+                    } else {
+                        startSpeaking(section, btn);
+                    }
+                    return;
+                }
+
+                // Case 2: Clicking a new button
+                startSpeaking(section, btn);
+            }
+
+            function startSpeaking(section, btn) {
+                stopSpeaking();
+                activeBtn = btn;
+                const icon = btn.querySelector('i');
+                currentSpeakingSection = section;
+
+                let textToRead = "";
+                let langCode = 'en-US';
+
+                try {
+                    if (currentLang === 'hi') {
+                        textToRead = currentData.parsedHi[section];
+                        langCode = 'hi-IN';
+                    } else if (currentLang === 'ta') {
+                        textToRead = currentData.parsedTa[section];
+                        langCode = 'ta-IN';
+                    } else {
+                        textToRead = currentData.parsedEn[section];
+                        langCode = 'en-US';
+                    }
+                } catch (e) {
+                    console.error("Data mapping error", e);
+                    return;
+                }
+
+                if (!textToRead || textToRead === "No data.") {
+                    alert("Content not available for this language yet.");
+                    return;
+                }
+
+                if (icon) {
+                    icon.classList.remove('fa-play');
+                    icon.classList.add('fa-pause');
+                }
+
+                speakSafe(textToRead, langCode, () => {
+                    if (activeBtn === btn) stopSpeaking();
+                });
+            }
+
+            function startSpeechWatchdog() {
+                clearInterval(speechInterval);
+                speechInterval = setInterval(() => {
+                    if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+                        // Some browsers stop speaking long text, toggling pause/resume helps
+                        window.speechSynthesis.pause();
+                        window.speechSynthesis.resume();
+                    } else if (!window.speechSynthesis.speaking) {
+                        clearInterval(speechInterval);
+                    }
+                }, 10000);
+            }
+
+            function stopSpeaking() {
+                window.speechSynthesis.cancel();
+                if (speechInterval) clearInterval(speechInterval);
+
+                // Clear state
+                activeBtn = null;
+                currentSpeakingSection = null;
+
+                // Reset ALL play buttons in the UI to be safe
+                document.querySelectorAll('.play-btn i').forEach(icon => {
+                    icon.classList.remove('fa-pause');
+                    icon.classList.add('fa-play');
+                });
+            }
+
+            function goBack() {
+                resetView();
+            }
+
+            function resetView() {
+                uploadView.style.display = 'block';
+                resultView.style.display = 'none';
+                backBtn.style.visibility = 'hidden';
+                pageTitle.innerText = "Upload & Analyze";
+                picker.value = '';
+                previewSection.style.display = 'none';
+            }
+
+            function showInfo() {
+                alert("CaricaCare AI \nOrganic Disease Diagnosis for Papayas.\nVersion 1.0");
+            }
+
+            function shareReport() {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'CaricaCare Disease Report',
+                        text: `I used CaricaCare to detect ${currentData.condition}. Accuracy: ${currentData.accuracy}.`,
+                        url: window.location.href,
+                    })
+                        .then(() => console.log('Successful share'))
+                        .catch((error) => console.log('Error sharing', error));
+                } else {
+                    alert("Sharing not supported on this browser.");
+                }
+            }
+
+            async function sendSMSReport() {
+                const phoneField = document.getElementById('sms-phone');
+                const smsBtn = document.getElementById('sms-btn');
+                const smsStatus = document.getElementById('sms-status');
+
+                const phone = phoneField.value.trim();
+                if (!phone || phone.length < 10) {
+                    alert("Please enter a valid 10-digit mobile number.");
+                    return;
+                }
+
+                const disease = currentData.condition;
+                const message = `CaricaCare AI Diagnosis: ${disease}. Accuracy: ${currentData.accuracy}. Please visit the app for full organic treatment suggestions.`;
+
+                smsBtn.disabled = true;
+                smsBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+                smsStatus.style.display = 'block';
+                smsStatus.style.color = '#64748b';
+                smsStatus.innerText = 'Connecting to gateway...';
+
+                try {
+                    const response = await fetch('/send-sms', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phone, message })
+                    });
+                    const result = await response.json();
+
+                    if (result.status === 'success') {
+                        smsStatus.style.color = '#16a34a';
+                        smsStatus.innerText = '✅ SMS Sent Successfully!';
+                        phoneField.value = '';
+                    } else {
+                        smsStatus.style.color = '#dc2626';
+                        smsStatus.innerText = '❌ Error: ' + result.message;
+                    }
+                } catch (err) {
+                    smsStatus.style.color = '#dc2626';
+                    smsStatus.innerText = '❌ Connection failed.';
+                } finally {
+                    smsBtn.disabled = false;
+                    smsBtn.innerHTML = '<i class="fa-solid fa-share"></i> Send SMS';
+                    setTimeout(() => {
+                        smsStatus.style.display = 'none';
+                    }, 5000);
+                }
+            }
+
+            // --- Reminder Assistant (Voice Flow) ---
+            let vaState = 0;
+            let vaDays = 0;
+            let vaPhone = "";
+            let vaRecognition = null;
+
+            function startReminderAssistant() {
+                document.getElementById('assistantModal').style.display = 'flex';
+                vaState = 1;
+                vaRunStep();
+            }
+
+            function stopReminderAssistant() {
+                document.getElementById('assistantModal').style.display = 'none';
+                if (vaRecognition) vaRecognition.stop();
+                window.speechSynthesis.cancel();
+            }
+
+            function vaRunStep() {
+                const textEl = document.getElementById('va-text');
+                const controls = document.getElementById('va-controls');
+                const typeControls = document.getElementById('va-type-controls');
+                const inputArea = document.getElementById('va-input-area');
+                const textInputYesNo = document.getElementById('va-text-input-yesno');
+                const textInputDuration = document.getElementById('va-text-input-duration');
+
+                controls.style.display = 'none';
+                typeControls.style.display = 'none';
+                inputArea.style.display = 'none';
+                textInputYesNo.style.display = 'none';
+                textInputDuration.style.display = 'none';
+
+                if (vaState === 1) {
+                    const msg = "மருந்து தெளிப்பதற்கு நினைவூட்டல் வேண்டுமா? ஆம் அல்லது இல்லை என்று சொல்லுங்கள்.";
+                    textEl.innerText = msg;
+
+                    // Disable buttons during speech
+                    controls.style.display = 'none';
+
+                    speakTamil(msg, () => {
+                        // Enable buttons after speech completes
+                        controls.style.display = 'flex';
+                        textInputYesNo.style.display = 'block'; // Show text input fallback
+                        startListening((res) => {
+                            const foundYes = ['ஆம்', 'ஆமாம்', 'வேண்டும்', 'yes', 'am', 'amam'].some(word => res.toLowerCase().includes(word));
+                            const foundNo = ['இல்லை', 'no', 'illai'].some(word => res.toLowerCase().includes(word));
+
+                            if (foundYes) {
+                                // Audio confirmation
+                                speakTamil("ஆம். சரி.", () => {
+                                    vaState = 2;
+                                    vaRunStep();
+                                });
+                            } else if (foundNo) {
+                                const endMsg = "சரி. தேவையெனில் பின்னர் சொல்லலாம்.";
+                                textEl.innerText = endMsg;
+                                speakTamil(endMsg, stopReminderAssistant);
+                            }
+                        });
+
+                        // Button fallback with audio confirmation
+                        document.getElementById('va-btn-yes').onclick = () => {
+                            controls.style.display = 'none';
+                            speakTamil("ஆம். சரி.", () => {
+                                vaState = 2;
+                                vaRunStep();
+                            });
+                        };
+                        document.getElementById('va-btn-no').onclick = () => {
+                            controls.style.display = 'none';
+                            const endMsg = "சரி. தேவையெனில் பின்னர் சொல்லலாம்.";
+                            textEl.innerText = endMsg;
+                            speakTamil(endMsg, stopReminderAssistant);
+                        };
+                    });
+                } else if (vaState === 2) {
+                    const msg = "எத்தனை நாட்களில் நினைவூட்டல் வேண்டும்? ஏழு நாட்கள், பதினைந்து நாட்கள், அல்லது டெமோ?";
+                    textEl.innerText = msg;
+
+                    // Hide controls during speech
+                    typeControls.style.display = 'none';
+
+                    speakTamil(msg, () => {
+                        // Show controls after speech completes
+                        typeControls.style.display = 'flex';
+                        textInputDuration.style.display = 'block'; // Show text input fallback
+                        startListening((res) => {
+                            if (res.includes('ஏழு') || res.includes('வாரம்') || res.includes('7')) {
+                                speakTamil("ஏழு நாட்கள். சரி.", () => vaPickType(7));
+                            } else if (res.includes('பதினைந்து') || res.includes('இரண்டு') || res.includes('15')) {
+                                speakTamil("பதினைந்து நாட்கள். சரி.", () => vaPickType(15));
+                            } else if (res.includes('டெமோ')) {
+                                speakTamil("டெமோ. சரி.", () => vaPickType('DEMO_1_MIN'));
+                            }
+                        });
+                    });
+                } else if (vaState === 4) {
+                    const msg = "நினைவூட்டல் SMS அனுப்ப, 10 இலக்க கைபேசி எண்ணை தட்டச்சு செய்து உள்ளிடுங்கள். எண்ணை உள்ளிட்டு 'உறுதி செய்' பொத்தானை அழுத்துங்கள்.";
+                    textEl.innerText = msg;
+                    speakTamil(msg, () => {
+                        inputArea.style.display = 'block';
+                    });
+                } else if (vaState === 5) {
+                    // Don't add spaces - just read the number naturally
+                    const msg = `உங்கள் எண் ${vaPhone}. சரிதானா?`;
+                    textEl.innerText = msg;
+
+                    // Hide controls during speech
+                    controls.style.display = 'none';
+
+                    speakTamil(msg, () => {
+                        // Show controls after speech completes
+                        controls.style.display = 'flex';
+                        textInputYesNo.style.display = 'block'; // Show text input fallback
+                        startListening((res) => {
+                            const foundYes = ['ஆம்', 'சரி', 'yes', 'correct', 'sari', 'am'].some(word => res.toLowerCase().includes(word));
+                            const foundNo = ['இல்லை', 'no', 'illai', 'thappu'].some(word => res.toLowerCase().includes(word));
+
+                            if (foundYes) {
+                                speakTamil("சரி. நன்றி.", () => {
+                                    vaState = 7;
+                                    vaRunStep();
+                                });
+                            } else if (foundNo) {
+                                speakTamil("சரி. மீண்டும் முயற்சிக்கவும்.", () => {
+                                    vaState = 6;
+                                    vaRunStep();
+                                });
+                            }
+                        });
+                        document.getElementById('va-btn-yes').onclick = () => {
+                            controls.style.display = 'none';
+                            speakTamil("சரி. நன்றி.", () => {
+                                vaState = 7;
+                                vaRunStep();
+                            });
+                        };
+                        document.getElementById('va-btn-no').onclick = () => {
+                            controls.style.display = 'none';
+                            speakTamil("சரி. மீண்டும் முயற்சிக்கவும்.", () => {
+                                vaState = 6;
+                                vaRunStep();
+                            });
+                        };
+                    });
+                } else if (vaState === 6) {
+                    const msg = "சரி. மீண்டும் எண்ணை உள்ளிடுங்கள்.";
+                    textEl.innerText = msg;
+                    speakTamil(msg, () => {
+                        vaState = 4;
+                        vaRunStep();
+                    });
+                } else if (vaState === 7) {
+                    const msg = "சரி. இந்த எண்ணுக்கு நினைவூட்டல் SMS அனுப்பப்படும். மருந்தை சரியான நேரத்தில் தெளிக்க மறக்க வேண்டாம்.";
+                    textEl.innerText = msg;
+                    speakTamil(msg, () => {
+                        console.log(`CONFIRMED_MOBILE_NUMBER: ${vaPhone}`);
+                        console.log(`REMINDER_DAYS: ${vaDays}`);
+
+                        fetch('/schedule-reminder', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ phone: vaPhone, days: vaDays })
+                        }).then(() => {
+                            // SHOW SIMULATED NOTIFICATION IN 5 SECONDS FOR DEMO
+                            if (vaDays === 'DEMO_1_MIN') {
+                                setTimeout(() => {
+                                    showDemoSmsPopup(vaPhone);
+                                }, 5000);
+                            }
+                            setTimeout(stopReminderAssistant, 2000);
+                        });
+                    });
+                }
+            }
+
+            function speakTamil(text, callback) {
+                // Show speaking indicator
+                const statusBox = document.getElementById('va-status-box');
+                if (statusBox) {
+                    statusBox.style.borderColor = 'var(--accent)';
+                    statusBox.style.background = '#f0fdf4';
+                }
+                speakSafe(text, 'ta-IN', callback);
+            }
+
+            async function startListening(callback) {
+                const micIcon = document.getElementById('va-mic-icon');
+                micIcon.style.display = 'block';
+                micIcon.querySelector('div').innerText = "பதிவு செய்யப்படுகிறது..."; // "Recording..."
+
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    const mediaRecorder = new MediaRecorder(stream);
+                    const audioChunks = [];
+
+                    mediaRecorder.ondataavailable = (event) => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const formData = new FormData();
+                        formData.append('file', audioBlob, 'recording.webm');
+
+                        micIcon.querySelector('div').innerText = "புரிந்து கொள்ளப்படுகிறது..."; // "Transcribing..."
+
+                        try {
+                            const response = await fetch('/transcribe', {
+                                method: 'POST',
+                                body: formData
+                            });
+                            const data = await response.json();
+
+                            micIcon.style.display = 'none';
+                            if (data.status === 'success') {
+                                console.log("Whisper Result:", data.transcript);
+                                callback(data.transcript);
+                            } else {
+                                console.error("Transcription failed:", data.message);
+                            }
+                        } catch (err) {
+                            console.error("Error sending audio:", err);
+                            micIcon.style.display = 'none';
+                        } finally {
+                            // Stop all tracks to release the microphone
+                            stream.getTracks().forEach(track => track.stop());
+                        }
+                    };
+
+                    // Record for 3 seconds of active input
+                    mediaRecorder.start();
+                    setTimeout(() => {
+                        if (mediaRecorder.state === "recording") {
+                            mediaRecorder.stop();
+                        }
+                    }, 3500);
+
+                } catch (err) {
+                    console.error("Mic access denied or error:", err);
+                    micIcon.style.display = 'none';
+
+                    if (window.location.protocol === 'http:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                        alert("Microphone access blocked! Chrome requires HTTPS for mic access on networks. \n\nFIX:\n1. Open chrome://flags/#unsafely-treat-insecure-origin-as-secure\n2. Enable it\n3. Add '" + window.location.origin + "' to the text box\n4. Relaunch Chrome.");
+                    } else {
+                        alert("Microphone access denied. Please click the Lock icon in the URL bar and allow Microphone access.");
+                    }
+                }
+            }
+
+            function vaPickType(val) {
+                vaDays = val;
+                const typeControls = document.getElementById('va-type-controls');
+                const textInputDuration = document.getElementById('va-text-input-duration');
+                typeControls.style.display = 'none';
+                textInputDuration.style.display = 'none';
+
+                // Audio confirmation for button selection
+                let confirmMsg = '';
+                if (val === 7) confirmMsg = 'ஏழு நாட்கள் தேர்ந்தெடுக்கப்பட்டது.';
+                else if (val === 15) confirmMsg = 'பதினைந்து நாட்கள் தேர்ந்தெடுக்கப்பட்டது.';
+                else if (val === 'DEMO_1_MIN') confirmMsg = 'டெமோ பயன்முறை தேர்ந்தெடுக்கப்பட்டது.';
+
+                speakTamil(confirmMsg, () => {
+                    vaState = 4;
+                    vaRunStep();
+                });
+            }
+
+            function vaConfirmNumber() {
+                const val = document.getElementById('va-phone-input').value.trim();
+                if (val.length === 10) {
+                    vaPhone = val;
+                    vaState = 5;
+                    vaRunStep();
+                } else {
+                    alert("தவறான எண். 10 இலக்கங்களை உள்ளிடவும்.");
+                }
+            }
+
+            // Text input handlers
+            function vaSubmitTextYesNo() {
+                const input = document.getElementById('va-text-yesno').value.trim().toLowerCase();
+                const textInputYesNo = document.getElementById('va-text-input-yesno');
+                const controls = document.getElementById('va-controls');
+
+                if (!input) {
+                    alert('தயவு செய்து உள்ளிடவும் (Please enter something)');
+                    return;
+                }
+
+                // Hide inputs
+                textInputYesNo.style.display = 'none';
+                controls.style.display = 'none';
+                document.getElementById('va-text-yesno').value = '';
+
+                // Check for yes/no
+                const foundYes = ['ஆம்', 'ஆமாம்', 'வேண்டும்', 'yes', 'am', 'y'].some(word => input.includes(word));
+                const foundNo = ['இல்லை', 'no', 'illai', 'n'].some(word => input.includes(word));
+
+                if (vaState === 1) {
+                    if (foundYes) {
+                        speakTamil("ஆம். சரி.", () => {
+                            vaState = 2;
+                            vaRunStep();
+                        });
+                    } else if (foundNo) {
+                        const endMsg = "சரி. தேவையெனில் பின்னர் சொல்லலாம்.";
+                        document.getElementById('va-text').innerText = endMsg;
+                        speakTamil(endMsg, stopReminderAssistant);
+                    } else {
+                        alert('தயவு செய்து "ஆம்" அல்லது "இல்லை" என தட்டச்சு செய்யவும் (Please type "yes" or "no")');
+                        textInputYesNo.style.display = 'block';
+                        controls.style.display = 'flex';
+                    }
+                } else if (vaState === 5) {
+                    if (foundYes) {
+                        speakTamil("சரி. நன்றி.", () => {
+                            vaState = 7;
+                            vaRunStep();
+                        });
+                    } else if (foundNo) {
+                        speakTamil("சரி. மீண்டும் முயற்சிக்கவும்.", () => {
+                            vaState = 6;
+                            vaRunStep();
+                        });
+                    } else {
+                        alert('தயவு செய்து "ஆம்" அல்லது "இல்லை" என தட்டச்சு செய்யவும் (Please type "yes" or "no")');
+                        textInputYesNo.style.display = 'block';
+                        controls.style.display = 'flex';
+                    }
+                }
+            }
+
+            function vaSubmitTextDuration() {
+                const input = document.getElementById('va-text-duration').value.trim().toLowerCase();
+                const textInputDuration = document.getElementById('va-text-input-duration');
+                const typeControls = document.getElementById('va-type-controls');
+
+                if (!input) {
+                    alert('தயவு செய்து உள்ளிடவும் (Please enter something)');
+                    return;
+                }
+
+                // Hide inputs
+                textInputDuration.style.display = 'none';
+                typeControls.style.display = 'none';
+                document.getElementById('va-text-duration').value = '';
+
+                // Check for duration
+                let selectedDays = null;
+                if (input.includes('7') || input.includes('ஏழு') || input.includes('வாரம்')) {
+                    selectedDays = 7;
+                } else if (input.includes('15') || input.includes('பதினைந்து') || input.includes('இரண்டு')) {
+                    selectedDays = 15;
+                } else if (input.includes('demo') || input.includes('டெமோ')) {
+                    selectedDays = 'DEMO_1_MIN';
+                }
+
+                if (selectedDays !== null) {
+                    let confirmMsg = '';
+                    if (selectedDays === 7) confirmMsg = 'ஏழு நாட்கள். சரி.';
+                    else if (selectedDays === 15) confirmMsg = 'பதினைந்து நாட்கள். சரி.';
+                    else if (selectedDays === 'DEMO_1_MIN') confirmMsg = 'டெமோ. சரி.';
+
+                    speakTamil(confirmMsg, () => vaPickType(selectedDays));
+                } else {
+                    alert('தயவு செய்து "7", "15", அல்லது "demo" என தட்டச்சு செய்யவும் (Please type "7", "15", or "demo")');
+                    textInputDuration.style.display = 'block';
+                    typeControls.style.display = 'flex';
+                }
+            }
+
+            function showDemoSmsPopup(phone) {
+                const screenAlert = document.createElement('div');
+                screenAlert.style.cssText = `
+                    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+                    width: 90%; max-width: 350px; background: white; border-radius: 16px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 9999;
+                    padding: 15px; border-top: 5px solid #2563eb;
+                    animation: slideDown 0.5s ease;
+                `;
+                screenAlert.innerHTML = `
+                    <div style="display: flex; gap: 12px; align-items: start;">
+                        <div style="background: #2563eb; color: white; padding: 10px; border-radius: 12px;">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 800; font-size: 14px; margin-bottom: 5px;">Messages • Now</div>
+                            <div style="font-size: 13px; color: #1e293b; line-height: 1.4;">
+                                🌿 <b>விவசாயி நண்பருக்கு நினைவூட்டல்</b><br>
+                                இன்று மருந்து தெளிப்பதற்கான நாள். நோய் பரவாமல் இருக்க தயவு செய்து மருந்து தெளியுங்கள்.
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(screenAlert);
+
+                setTimeout(() => {
+                    screenAlert.style.animation = 'slideUp 0.5s ease forwards';
+                    setTimeout(() => screenAlert.remove(), 500);
+                }, 8000);
+            }
+
+
+            // --- Modal Functions ---
+            function openAssistantModal() {
+                const modal = document.getElementById('assistantModal');
+                modal.style.display = 'flex';
+                // Pre-fill phone if registered
+                const phone = localStorage.getItem('caricacare_phone');
+                if (phone) {
+                    document.getElementById('sms-phone').value = phone;
+                }
+            }
+
+            function closeAssistantModal() {
+                document.getElementById('assistantModal').style.display = 'none';
+            }
+
+            // --- New Registration Functions ---
+            function registerUser() {
+                const phone = document.getElementById('reg-phone').value.trim();
+                if (!phone || phone.length < 10) {
+                    alert("Please enter a valid mobile number.");
+                    return;
+                }
+                localStorage.setItem('caricacare_phone', phone);
+                updateRegistrationUI();
+            }
+
+            function clearRegistration() {
+                localStorage.removeItem('caricacare_phone');
+                updateRegistrationUI();
+            }
+
+            function updateRegistrationUI() {
+                const phone = localStorage.getItem('caricacare_phone');
+                const form = document.getElementById('reg-form');
+                const status = document.getElementById('reg-status');
+                const display = document.getElementById('registered-phone-display');
+                const smsPhoneField = document.getElementById('sms-phone');
+
+                if (phone) {
+                    form.style.display = 'none';
+                    status.style.display = 'block';
+                    display.innerText = "Registered: " + phone;
+                    if (smsPhoneField) smsPhoneField.value = phone;
+                } else {
+                    form.style.display = 'flex';
+                    status.style.display = 'none';
+                }
+            }
+
+            async function autoSendSMS(phone, data) {
+                const disease = data.condition;
+                const message = `[CaricaCare AI] Automated Report: ${disease} detected with ${data.accuracy} confidence. Please check the app for organic treatment protocols.`;
+
+                try {
+                    await fetch('/send-sms', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phone, message })
+                    });
+                    console.log("Automated SMS sent to " + phone);
+                } catch (err) {
+                    console.error("Failed to send automated SMS:", err);
+                }
+            }
+
+            // Initialize UI
+            window.addEventListener('load', () => {
+                updateRegistrationUI();
+            });
+
+            // Global interaction to unlock audio
+            document.body.addEventListener('click', () => {
+                if (window.speechSynthesis.speaking) return;
+                const silent = new SpeechSynthesisUtterance("");
+                window.speechSynthesis.speak(silent);
+            }, { once: true });
+
+
+
+
+        </script>
+    </div>
+
+
+    </div>
+</body>
+
+</html>
