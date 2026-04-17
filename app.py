@@ -276,7 +276,12 @@ def schedule_reminder():
 # Ensure temp directory exists (runs on import for Gunicorn)
 os.makedirs('static/temp', exist_ok=True)
 
+# import os
+
+# if __name__ == "__main__":
+#     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
 import os
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
