@@ -57,6 +57,7 @@
             <div style="display: flex; gap: 12px; flex-direction: column;">
                 <button class="explore-btn" onclick="startApp()" style="margin-bottom: 0;">🔍 Detect Disease</button>
                 <button class="explore-btn" onclick="startSeasonalAdvisory()" style="background: #6366f1; margin-bottom: 0;">📅 Seasonal Advisory</button>
+                <button class="explore-btn" onclick="startChat()" style="background: #8b5cf6; margin-bottom: 0;">💬 Ask Expert</button>
             </div>
         </div>
 
@@ -151,9 +152,16 @@
             </div>
 
             <!-- Results Section -->
-            <div id="seasonal-results-view" style="display: none; margin-top: 20px;">
+            <div id="seasonal-results-view" style="display: none;">
+                <!-- Results Header -->
+                <div class="app-header">
+                    <button class="back-btn" onclick="goBackToSeasonalForm()"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="header-title">Predictions</div>
+                    <div style="width: 24px;"></div>
+                </div>
+
                 <!-- Disease Risk Cards -->
-                <div class="disease-risk-section">
+                <div class="disease-risk-section" style="margin-top: 20px;">
                     <h3 style="font-weight: 700; color: var(--text-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
                         <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i> Diseases at Risk This Season
                     </h3>
@@ -176,6 +184,52 @@
                 <button onclick="resetSeasonalForm()" style="width: 100%; padding: 12px; background: white; color: var(--primary-green); border: 2px solid var(--primary-green); border-radius: 8px; font-weight: 600; margin-top: 20px; cursor: pointer;">
                     <i class="fa-solid fa-redo"></i> Check Another Region
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHAT VIEW -->
+    <div id="chat-view" style="display: none;">
+        <div class="main-container">
+            <!-- Chat Header -->
+            <div class="app-header">
+                <button class="back-btn" onclick="goBack()"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="header-title">🤖 Ask Expert</div>
+                <div style="width: 24px;"></div>
+            </div>
+
+            <!-- Chat Messages Container -->
+            <div id="chatMessagesContainer" style="display: flex; flex-direction: column; gap: 12px; margin: 20px 0; max-height: 400px; overflow-y: auto; padding: 10px; background: #f8fafc; border-radius: 8px;">
+                <div style="text-align: center; color: #64748b; font-size: 13px; padding: 20px;">
+                    <p>👋 Welcome! Ask questions about papaya disease management</p>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div style="display: flex; gap: 8px; margin-top: 15px;">
+                <input type="text" id="chatInput" placeholder="Ask a question..." style="flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;" />
+                <button onclick="sendChatMessage()" style="padding: 12px 20px; background: var(--primary-green); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s;">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+
+            <!-- Quick Questions -->
+            <div style="margin-top: 20px;">
+                <p style="font-weight: 600; color: var(--text-dark); font-size: 13px; margin-bottom: 10px;">Quick Questions:</p>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <button onclick="askQuestion('What are the symptoms of anthracnose?')" style="text-align: left; padding: 10px 12px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; font-size: 13px; color: #475569;">
+                        📋 What are the symptoms of anthracnose?
+                    </button>
+                    <button onclick="askQuestion('How can I prevent leaf curl disease?')" style="text-align: left; padding: 10px 12px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; font-size: 13px; color: #475569;">
+                        🛡️ How can I prevent leaf curl disease?
+                    </button>
+                    <button onclick="askQuestion('What organic treatments work best for ring spot?')" style="text-align: left; padding: 10px 12px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; font-size: 13px; color: #475569;">
+                        🌿 What organic treatments for ring spot?
+                    </button>
+                    <button onclick="askQuestion('When is the best time to spray pesticides?')" style="text-align: left; padding: 10px 12px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; font-size: 13px; color: #475569;">
+                        ⏰ When is the best time to spray?
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -566,8 +620,16 @@
 
             function startApp() {
                 document.getElementById('landing-view').style.display = 'none';
+                document.getElementById('seasonal-view').style.display = 'none';
                 document.getElementById('app-view').style.display = 'block';
                 resetView();
+                window.scrollTo(0, 0);
+            }
+
+            function startSeasonalAdvisory() {
+                document.getElementById('landing-view').style.display = 'none';
+                document.getElementById('app-view').style.display = 'none';
+                document.getElementById('seasonal-view').style.display = 'block';
                 window.scrollTo(0, 0);
             }
 
@@ -968,7 +1030,19 @@
             }
 
             function goBack() {
-                resetView();
+                const seasonalView = document.getElementById('seasonal-view');
+                const appView = document.getElementById('app-view');
+                const landingView = document.getElementById('landing-view');
+
+                if (seasonalView && seasonalView.style.display !== 'none') {
+                    seasonalView.style.display = 'none';
+                    landingView.style.display = 'block';
+                } else if (appView && appView.style.display !== 'none') {
+                    resetView();
+                    landingView.style.display = 'block';
+                    appView.style.display = 'none';
+                }
+                window.scrollTo(0, 0);
             }
 
             function resetView() {
@@ -1528,8 +1602,164 @@
                 window.speechSynthesis.speak(silent);
             }, { once: true });
 
+            // ============ SEASONAL ADVISORY FUNCTIONS ============
+            async function getSeasonalAdvice() {
+                const crop = document.getElementById('cropSelect').value;
+                const season = document.getElementById('seasonSelect').value;
+                const region = document.getElementById('regionInput').value;
 
+                if (!crop || !season) {
+                    alert('Please select crop type and season');
+                    return;
+                }
 
+                // Show loading state
+                document.getElementById('seasonal-form-view').style.display = 'none';
+                document.getElementById('seasonal-results-view').style.display = 'block';
+                document.getElementById('diseasesContainer').innerHTML = '<p style="text-align: center; color: #64748b;">Loading disease predictions...</p>';
+
+                try {
+                    const response = await fetch('/seasonal-advisory', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ crop, season, region })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Failed to get predictions');
+                    }
+
+                    // Display disease risks
+                    let diseaseHTML = '';
+                    data.diseases.forEach(disease => {
+                        const riskColor = disease.risk === 'High' ? '#ef4444' : disease.risk === 'Medium' ? '#f59e0b' : '#10b981';
+                        const riskBg = disease.risk === 'High' ? '#fef2f2' : disease.risk === 'Medium' ? '#fffbeb' : '#f0fdf4';
+                        diseaseHTML += `
+                            <div style="background: ${riskBg}; padding: 12px; border-radius: 8px; border-left: 4px solid ${riskColor};">
+                                <div style="font-weight: 600; color: ${riskColor}; display: flex; justify-content: space-between; align-items: center;">
+                                    <span>${disease.name}</span>
+                                    <span style="font-size: 12px; background: ${riskColor}; color: white; padding: 4px 8px; border-radius: 4px;">${disease.risk}</span>
+                                </div>
+                                <p style="color: var(--text-light); font-size: 13px; margin-top: 6px;">${disease.description}</p>
+                            </div>
+                        `;
+                    });
+                    document.getElementById('diseasesContainer').innerHTML = diseaseHTML;
+
+                    // Display prevention tips
+                    let preventionHTML = '<ul style="margin: 0; padding-left: 20px;">';
+                    data.prevention.forEach(tip => {
+                        preventionHTML += `<li style="margin: 8px 0; color: var(--text-dark); font-size: 14px;">${tip}</li>`;
+                    });
+                    preventionHTML += '</ul>';
+                    document.getElementById('preventionContainer').innerHTML = preventionHTML;
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error: ' + error.message);
+                    document.getElementById('seasonal-form-view').style.display = 'block';
+                    document.getElementById('seasonal-results-view').style.display = 'none';
+                }
+            }
+
+            function resetSeasonalForm() {
+                document.getElementById('cropSelect').value = '';
+                document.getElementById('seasonSelect').value = '';
+                document.getElementById('regionInput').value = '';
+                document.getElementById('seasonal-form-view').style.display = 'block';
+                document.getElementById('seasonal-results-view').style.display = 'none';
+            }
+
+            // ============ CHAT FUNCTIONS ============
+            function goBackToSeasonalForm() {
+                document.getElementById('seasonal-results-view').style.display = 'none';
+                document.getElementById('seasonal-form-view').style.display = 'block';
+            }
+
+            function startChat() {
+                document.getElementById('landing-view').style.display = 'none';
+                document.getElementById('seasonal-view').style.display = 'none';
+                document.getElementById('app-view').style.display = 'none';
+                document.getElementById('chat-view').style.display = 'block';
+                document.getElementById('chatInput').focus();
+                window.scrollTo(0, 0);
+            }
+
+            function askQuestion(question) {
+                document.getElementById('chatInput').value = question;
+                sendChatMessage();
+            }
+
+            async function sendChatMessage() {
+                const chatInput = document.getElementById('chatInput');
+                const message = chatInput.value.trim();
+                
+                if (!message) return;
+
+                // Add user message to chat
+                addChatBubble(message, 'user');
+                chatInput.value = '';
+
+                try {
+                    // Send to backend chat API
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        addChatBubble(data.reply, 'bot');
+                    } else {
+                        addChatBubble('Sorry, I could not process that. Try another question.', 'bot');
+                    }
+                } catch (error) {
+                    console.error('Chat error:', error);
+                    addChatBubble('Error: Could not reach the server. Please try again.', 'bot');
+                }
+
+                // Scroll to bottom
+                setTimeout(() => {
+                    const container = document.getElementById('chatMessagesContainer');
+                    container.scrollTop = container.scrollHeight;
+                }, 100);
+            }
+
+            function addChatBubble(text, sender) {
+                const container = document.getElementById('chatMessagesContainer');
+                
+                // Remove welcome message if first message
+                const welcome = container.querySelector('[data-welcome]');
+                if (welcome) welcome.remove();
+
+                const bubble = document.createElement('div');
+                bubble.style.display = 'flex';
+                bubble.style.justifyContent = sender === 'user' ? 'flex-end' : 'flex-start';
+                bubble.style.marginBottom = '8px';
+
+                const message = document.createElement('div');
+                message.style.maxWidth = '80%';
+                message.style.padding = '10px 14px';
+                message.style.borderRadius = '12px';
+                message.style.fontSize = '13px';
+                message.style.lineHeight = '1.4';
+                
+                if (sender === 'user') {
+                    message.style.background = 'var(--primary-green)';
+                    message.style.color = 'white';
+                } else {
+                    message.style.background = '#e2e8f0';
+                    message.style.color = 'var(--text-dark)';
+                }
+
+                message.textContent = text;
+                bubble.appendChild(message);
+                container.appendChild(bubble);
+            }
 
         </script>
     </div>

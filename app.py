@@ -452,6 +452,52 @@ def seasonal_advisory():
         return jsonify({'error': str(e)}), 500
 
 
+# ============ CHAT ENDPOINT ============
+@app.route('/chat', methods=['POST'])
+def chat():
+    """
+    AI-powered chat endpoint for answering farmer questions about disease management
+    """
+    try:
+        data = request.json
+        user_message = data.get('message', '').strip()
+
+        if not user_message:
+            return jsonify({'error': 'Empty message'}), 400
+
+        # Use Groq LLM to answer questions
+        response = ADVISOR.client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {
+                    "role": "system",
+                    "content": """You are CaricaCare AI Expert - a helpful agricultural advisor for papaya farmers. 
+                    Answer questions about papaya disease management, organic farming, prevention, treatment, and best practices.
+                    Keep answers short, practical, and farmer-friendly.
+                    Use simple language and focus on actionable advice.
+                    Provide advice in English, Tamil, and Hindi when helpful."""
+                },
+                {
+                    "role": "user",
+                    "content": user_message
+                }
+            ],
+            max_tokens=300,
+            temperature=0.7
+        )
+
+        reply = response.choices[0].message.content.strip()
+
+        return jsonify({
+            'reply': reply,
+            'status': 'success'
+        }), 200
+
+    except Exception as e:
+        print(f"Chat error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+
 # Ensure temp directory exists (runs on import for Gunicorn)
 os.makedirs('static/temp', exist_ok=True)
 
