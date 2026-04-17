@@ -1032,9 +1032,13 @@
             function goBack() {
                 const seasonalView = document.getElementById('seasonal-view');
                 const appView = document.getElementById('app-view');
+                const chatView = document.getElementById('chat-view');
                 const landingView = document.getElementById('landing-view');
 
-                if (seasonalView && seasonalView.style.display !== 'none') {
+                if (chatView && chatView.style.display !== 'none') {
+                    chatView.style.display = 'none';
+                    landingView.style.display = 'block';
+                } else if (seasonalView && seasonalView.style.display !== 'none') {
                     seasonalView.style.display = 'none';
                     landingView.style.display = 'block';
                 } else if (appView && appView.style.display !== 'none') {
