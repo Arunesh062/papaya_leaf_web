@@ -54,7 +54,10 @@
                 Identify papaya leaf diseases instantly. Empowering farmers and researchers with real-time diagnostic
                 tools powered by deep learning.
             </div>
-            <button class="explore-btn" onclick="startApp()">Explore System</button>
+            <div style="display: flex; gap: 12px; flex-direction: column;">
+                <button class="explore-btn" onclick="startApp()" style="margin-bottom: 0;">🔍 Detect Disease</button>
+                <button class="explore-btn" onclick="startSeasonalAdvisory()" style="background: #6366f1; margin-bottom: 0;">📅 Seasonal Advisory</button>
+            </div>
         </div>
 
         <div class="section-head">
@@ -87,6 +90,93 @@
             </div>
             <div class="footer-copy">© 2024 Papaya Leaf Disease Detection System.</div>
             <div class="footer-credit">DEVELOPED BY COLLEGE OF AGRICULTURE RESEARCH</div>
+        </div>
+    </div>
+
+    <!-- SEASONAL ADVISORY VIEW -->
+    <div id="seasonal-view" style="display: none;">
+        <div class="main-container">
+            <!-- Header -->
+            <div class="app-header">
+                <button class="back-btn" onclick="goBack()" id="seasonalBackBtn"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="header-title">Seasonal Disease Advisory</div>
+                <div style="width: 24px;"></div>
+            </div>
+
+            <!-- Form Section -->
+            <div id="seasonal-form-view" style="padding: 20px 0;">
+                <div class="hero-section">
+                    <div class="hero-title">Plan Your Protection</div>
+                    <div class="hero-subtitle">Tell us what you're growing and when<br>we'll predict seasonal disease risks</div>
+                </div>
+
+                <div class="form-section" style="margin-top: 20px;">
+                    <!-- Crop Selection -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: var(--text-dark); margin-bottom: 8px; display: block;">🌱 What are you cultivating?</label>
+                        <select id="cropSelect" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;">
+                            <option value="">Select Crop Type</option>
+                            <option value="papaya">Papaya</option>
+                            <option value="mango">Mango</option>
+                            <option value="coconut">Coconut</option>
+                            <option value="banana">Banana</option>
+                            <option value="guava">Guava</option>
+                            <option value="mixed">Mixed Fruits</option>
+                        </select>
+                    </div>
+
+                    <!-- Season Selection -->
+                    <div class="form-group" style="margin-top: 16px;">
+                        <label style="font-weight: 600; color: var(--text-dark); margin-bottom: 8px; display: block;">🌤️ Current Season</label>
+                        <select id="seasonSelect" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;">
+                            <option value="">Select Season</option>
+                            <option value="monsoon">Monsoon (Jun-Sep)</option>
+                            <option value="summer">Summer (Mar-May)</option>
+                            <option value="winter">Winter (Dec-Feb)</option>
+                            <option value="spring">Spring (Jan-Apr)</option>
+                        </select>
+                    </div>
+
+                    <!-- Region Selection -->
+                    <div class="form-group" style="margin-top: 16px;">
+                        <label style="font-weight: 600; color: var(--text-dark); margin-bottom: 8px; display: block;">📍 Your Region</label>
+                        <input type="text" id="regionInput" placeholder="e.g., Tamil Nadu, Kerala, Other" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;" />
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button onclick="getSeasonalAdvice()" style="width: 100%; padding: 14px; background: var(--primary-green); color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 15px; margin-top: 20px; cursor: pointer; transition: 0.3s;">
+                        <i class="fa-solid fa-sparkles"></i> Get Disease Predictions
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="seasonal-results-view" style="display: none; margin-top: 20px;">
+                <!-- Disease Risk Cards -->
+                <div class="disease-risk-section">
+                    <h3 style="font-weight: 700; color: var(--text-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i> Diseases at Risk This Season
+                    </h3>
+                    <div id="diseasesContainer" style="display: flex; flex-direction: column; gap: 12px;">
+                        <!-- Risk cards will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Prevention Tips -->
+                <div style="margin-top: 25px;">
+                    <h3 style="font-weight: 700; color: var(--text-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-shield-halved" style="color: #10b981;"></i> Prevention Recommendations
+                    </h3>
+                    <div id="preventionContainer" style="background: #f0fdf4; padding: 15px; border-radius: 8px; border-left: 4px solid var(--primary-green);">
+                        <!-- Prevention tips will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <button onclick="resetSeasonalForm()" style="width: 100%; padding: 12px; background: white; color: var(--primary-green); border: 2px solid var(--primary-green); border-radius: 8px; font-weight: 600; margin-top: 20px; cursor: pointer;">
+                    <i class="fa-solid fa-redo"></i> Check Another Region
+                </button>
+            </div>
         </div>
     </div>
 

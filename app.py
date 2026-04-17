@@ -273,6 +273,185 @@ def schedule_reminder():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+# ============ SEASONAL DISEASE ADVISORY ENDPOINT ============
+@app.route('/seasonal-advisory', methods=['POST'])
+def seasonal_advisory():
+    """
+    Provides seasonal disease predictions based on crop type and season
+    """
+    try:
+        data = request.json
+        crop = data.get('crop', '').lower()
+        season = data.get('season', '').lower()
+        region = data.get('region', 'General')
+
+        # Disease data by crop and season
+        seasonal_diseases = {
+            'papaya': {
+                'monsoon': {
+                    'diseases': [
+                        {
+                            'name': 'Ring Spot Virus',
+                            'risk': 'High',
+                            'description': 'Circular rings appear on leaves during monsoon humidity. Spreads via aphids.'
+                        },
+                        {
+                            'name': 'Anthracnose',
+                            'risk': 'High',
+                            'description': 'Fungal disease causing dark spots in wet conditions. Very common in monsoons.'
+                        },
+                        {
+                            'name': 'Leaf Curl',
+                            'risk': 'Medium',
+                            'description': 'Whitefly-transmitted virus causing leaf distortion.'
+                        }
+                    ],
+                    'prevention': [
+                        'Maintain good field drainage to reduce humidity',
+                        'Install yellow sticky traps for aphid control',
+                        'Apply neem oil spray every 2 weeks',
+                        'Remove infected leaves immediately',
+                        'Use disease-resistant varieties if available',
+                        'Avoid overhead irrigation, use drip irrigation'
+                    ]
+                },
+                'summer': {
+                    'diseases': [
+                        {
+                            'name': 'Mite Disease',
+                            'risk': 'High',
+                            'description': 'Spider mites thrive in dry, hot conditions causing leaf yellowing.'
+                        },
+                        {
+                            'name': 'Mosaic Virus',
+                            'risk': 'Medium',
+                            'description': 'Causes irregular patterns on leaves. Spread by aphids.'
+                        },
+                        {
+                            'name': 'Powdery Mildew',
+                            'risk': 'Low',
+                            'description': 'White powdery coating on leaves in hot, dry weather.'
+                        }
+                    ],
+                    'prevention': [
+                        'Provide adequate irrigation to reduce plant stress',
+                        'Install shade nets in extreme heat areas',
+                        'Use sulfur dust for mite control',
+                        'Monitor plants regularly for early detection',
+                        'Apply potassium deficiency supplements',
+                        'Keep weeds around field cleared'
+                    ]
+                },
+                'winter': {
+                    'diseases': [
+                        {
+                            'name': 'Bacterial Spot',
+                            'risk': 'Medium',
+                            'description': 'Promotes bacterial growth in cool, moist conditions.'
+                        },
+                        {
+                            'name': 'Healthy Growth!',
+                            'risk': 'Low',
+                            'description': 'Winter provides ideal conditions for healthy papaya growth.'
+                        }
+                    ],
+                    'prevention': [
+                        'Maintain proper spacing between plants for air circulation',
+                        'Apply copper-based fungicides preventively',
+                        'Remove fallen leaves and debris',
+                        'Prune lower branches for better ventilation',
+                        'Monitor irrigation - reduce in cold months',
+                        'Ensure adequate nitrogen supply'
+                    ]
+                },
+                'spring': {
+                    'diseases': [
+                        {
+                            'name': 'Mealybug Infestation',
+                            'risk': 'Medium',
+                            'description': 'Jumping up from winter dormancy as temperatures rise.'
+                        },
+                        {
+                            'name': 'Leaf Spot',
+                            'risk': 'Low',
+                            'description': 'Light fungal spots possible before summer heat arrives.'
+                        }
+                    ],
+                    'prevention': [
+                        'Inspect plants weekly during spring transition',
+                        'Release natural predators (ladybugs, parasitic wasps)',
+                        'Clean pruning tools to prevent spread',
+                        'Spray neem oil as temperatures increase',
+                        'Prepare irrigation systems for summer',
+                        'Apply balanced fertilizers for growth'
+                    ]
+                }
+            },
+            'mango': {
+                'monsoon': {
+                    'diseases': [
+                        {'name': 'Anthracnose', 'risk': 'High', 'description': 'Severe during monsoon in mango.'},
+                        {'name': 'Powdery Mildew', 'risk': 'Medium', 'description': 'Common on new growth in humid season.'}
+                    ],
+                    'prevention': ['Spray copper fungicides', 'Improve canopy ventilation', 'Collect and burn fallen leaves']
+                },
+                'summer': {
+                    'diseases': [
+                        {'name': 'Mite Disease', 'risk': 'High', 'description': 'Severe in dry summer.'},
+                        {'name': 'Fruit Fly', 'risk': 'Medium', 'description': 'Increases during summer fruiting.'}
+                    ],
+                    'prevention': ['Regular watering during dry season', 'Use fruit bagging technique', 'Scout for pests']
+                },
+                'winter': {
+                    'diseases': [
+                        {'name': 'Bacterial Canker', 'risk': 'Low', 'description': 'Rare in winter conditions.'}
+                    ],
+                    'prevention': ['Maintain plant health', 'Prune dead wood', 'Sanitize tools']
+                },
+                'spring': {
+                    'diseases': [
+                        {'name': 'Flower/Fruit Drop', 'risk': 'Medium', 'description': 'Temperature fluctuations cause drops.'}
+                    ],
+                    'prevention': ['Maintain soil moisture', 'Apply micronutrient sprays', 'Avoid harsh pruning']
+                }
+            }
+        }
+
+        # Default response for unknown crops
+        if crop not in seasonal_diseases:
+            return jsonify({
+                'diseases': [
+                    {'name': 'General Fungal Risk', 'risk': 'Medium', 'description': 'Monitor crop for standard fungal diseases.'},
+                    {'name': 'General Pest Risk', 'risk': 'Medium', 'description': 'Use integrated pest management techniques.'}
+                ],
+                'prevention': [
+                    'Scout fields regularly',
+                    'Use crop rotation',
+                    'Apply organic farming practices',
+                    'Install pest traps',
+                    'Maintain field hygiene',
+                    'Use recommended varieties'
+                ]
+            }), 200
+
+        # Get seasonal data
+        if season not in seasonal_diseases[crop]:
+            season = 'monsoon'  # Default to monsoon
+
+        advisory = seasonal_diseases[crop][season]
+
+        return jsonify({
+            'crop': crop,
+            'season': season,
+            'region': region,
+            'diseases': advisory['diseases'],
+            'prevention': advisory['prevention']
+        }), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 # Ensure temp directory exists (runs on import for Gunicorn)
 os.makedirs('static/temp', exist_ok=True)
 
